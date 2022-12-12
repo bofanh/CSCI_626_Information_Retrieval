@@ -19,6 +19,8 @@ import time
 import missingno as msno
 import math
 
+import pickle
+
 english_punctuations = [',', '.', ':', ';', '?', '(', ')', '[', ']', '&', '!', '*', '@', '#', '$', '%']
 
 
@@ -36,6 +38,19 @@ def loaddata(numbers = 1000):
     df = pd.read_csv(filename, index_col='Unnamed: 0')
     df.head()
     df = df.sample(n = numbers)
+    # read df
+    df = df[['asin','reviewText']]
+
+    # print(df.head())
+    return df
+
+
+# load entire dataset
+def loaddataall(): 
+    filename = 'data/prep.csv'
+    df = pd.read_csv(filename, index_col='Unnamed: 0')
+    df.head()
+    # df = df.sample(n = numbers)
     # read df
     df = df[['asin','reviewText']]
 
@@ -133,6 +148,28 @@ def simRank(df, df_index, rangN = 30,col=2):
     return df_result
 
 
+def sumsim(df_result):
+    df_result =df_result.reset_index()
+    df_result = df_result.groupby(by=['asin']).sum()
+    df_result.sort_values('CosSim', ascending=False)
+
+    df_result1 =df_result.reset_index()
+
+    print( df_result1['asin'].nunique())
+    return df_result
+
+    
+
+
+def get_corpus():
+    df = loaddataall()
+    df = clean_data(df)
+    corpus = create_corpus(df["lem"])
+    with open("data/corpusfull", "wb") as fp:   #Pickling
+        pickle.dump(corpus, fp)
+    
+    print('done')
+
 
 
 def main():
@@ -146,7 +183,8 @@ def main():
     row, col = df.shape
     df2 = cor2vec(corpus,df)
     df_index = df['asin']
-    result = simRank(df2, df_index, rangN = datasize+1, col=col)
+    df_result = simRank(df2, df_index, rangN = datasize+1, col=col)
+    result = sumsim(df_result)
 
     # print(corpus)
     # print(df.head())
@@ -159,4 +197,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    get_corpus()
