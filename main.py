@@ -27,11 +27,11 @@ english_punctuations = [',', '.', ':', ';', '?', '(', ')', '[', ']', '&', '!', '
 
 
 
-def quary():
-    quary_search = str(input('Enter your search key words:'))
-    print(quary_search)
+def query():
+    query_search = str(input('Enter your search key words:'))
+    print(query_search)
 
-    return quary_search
+    return query_search
 
 def loaddata(numbers = 1000):
     filename = 'data/prep.csv'
@@ -57,7 +57,7 @@ def loaddataall():
     # print(df.head())
     return df
 
-def addquarytodf(search,df2):
+def addquerytodf(search,df2):
     df1 = pd.DataFrame({'asin':'000000', 'reviewText':search}, index=[0])
     # print(df1)
     df3 = pd.concat([df1,df2])
@@ -174,10 +174,10 @@ def get_corpus():
 
 def main():
     start = time.time()
-    search = quary()
-    datasize = 1000
+    search = query()
+    datasize = 10000
     df = loaddata(datasize)
-    df = addquarytodf(search,df)
+    df = addquerytodf(search,df)
     df = clean_data(df)
     corpus = create_corpus(df["lem"])
     row, col = df.shape
@@ -197,5 +197,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    get_corpus()
+    main()
+    # get_corpus()
